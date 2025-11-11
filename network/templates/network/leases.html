@@ -1,0 +1,54 @@
+{% extends 'network/base.html' %}
+
+{% block title %}View Leases - DHCP Simulator{% endblock %}
+
+{% block content %}
+<h1 class="text-center mb-4">📋 DHCP Lease Records</h1>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+{% if leases %}
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>MAC Address</th>
+                <th>DHCP Version</th>
+                <th>Assigned IP</th>
+                <th>Lease Time</th>
+                <th>MAC Parity</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lease in leases %}
+            <tr>
+                <td><code>{{ lease.mac_address }}</code></td>
+                <td>
+                    <span class="badge {% if lease.dhcp_version == 'DHCPv4' %}bg-info{% else %}bg-primary{% endif %}">
+                        {{ lease.dhcp_version }}
+                    </span>
+                </td>
+                <td><strong>{{ lease.assigned_ip }}</strong></td>
+                <td>{{ lease.lease_time }}</td>
+                <td>{{ lease.mac_sum_parity|default:"N/A" }}</td>
+                <td>{{ lease.timestamp }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="alert alert-info">
+    Total Leases: <strong>{{ leases|length }}</strong>
+</div>
+{% else %}
+<div class="alert alert-warning">No leases found in database.</div>
+{% endif %}
+
+<div class="text-center mt-4">
+    <a href="{% url 'network:index' %}" class="btn btn-primary">Create New Lease</a>
+</div>
+{% endblock %}
